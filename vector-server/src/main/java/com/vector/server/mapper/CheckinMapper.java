@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Checkin;
+import com.vector.server.domain.entity.Checkin;
 
 /**
  * 签到表(Checkin)表数据库访问层

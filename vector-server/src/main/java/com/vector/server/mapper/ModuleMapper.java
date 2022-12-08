@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Module;
+import com.vector.server.domain.entity.Module;
 
 /**
  * 模块资源表(Module)表数据库访问层

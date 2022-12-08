@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.Workday;
+import com.vector.server.domain.entity.Workday;
 
 /**
  * (Workday)表服务接⼝

@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.City;
+import com.vector.server.domain.entity.City;
 
 /**
  * 疫情城市列表(City)表数据库访问层

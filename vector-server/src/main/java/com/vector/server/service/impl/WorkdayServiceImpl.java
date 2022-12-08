@@ -1,6 +1,6 @@
 package com.vector.server.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.entity.Workday;
+import com.vector.server.domain.entity.Workday;
 import com.vector.server.mapper.WorkdayMapper;
 import com.vector.server.service.WorkdayService;
 import org.springframework.stereotype.Service;

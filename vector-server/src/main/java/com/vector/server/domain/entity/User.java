@@ -1,10 +1,11 @@
-package com.vector.server.entity;
+package com.vector.server.domain.entity;
 import java.util.Date;
-import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
  * 用户表(User)表实体类
@@ -19,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @TableName("tb_user")
 public class User {
     //主键@TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     //长期授权字符串    

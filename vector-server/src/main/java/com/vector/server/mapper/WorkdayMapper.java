@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Workday;
+import com.vector.server.domain.entity.Workday;
 
 /**
  * (Workday)表数据库访问层

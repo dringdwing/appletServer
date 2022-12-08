@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Meeting;
+import com.vector.server.domain.entity.Meeting;
 
 /**
  * 会议表(Meeting)表数据库访问层

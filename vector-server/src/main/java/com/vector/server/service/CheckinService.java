@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.Checkin;
+import com.vector.server.domain.entity.Checkin;
 
 /**
  * 签到表(Checkin)表服务接⼝

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-class ThreadLocalToken {
+public class ThreadLocalToken {
     private ThreadLocal<String> local = new ThreadLocal<>();
 
     public void setToken(String token) {

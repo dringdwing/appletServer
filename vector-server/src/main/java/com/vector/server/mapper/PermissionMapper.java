@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Permission;
+import com.vector.server.domain.entity.Permission;
 
 /**
  * (Permission)表数据库访问层

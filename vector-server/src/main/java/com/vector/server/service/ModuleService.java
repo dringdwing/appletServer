@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.Module;
+import com.vector.server.domain.entity.Module;
 
 /**
  * 模块资源表(Module)表服务接⼝

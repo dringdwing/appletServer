@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Scope("prototype")
 public class OAuth2Filter extends AuthenticatingFilter {
-    @Value("${vector.jwt.cache-expire}")
+    @Value("${applet.jwt.cache-expire}")
     private int cachedExpire;
 
     @Resource

@@ -1,10 +1,9 @@
-package com.vector.server.entity;
+package com.vector.server.domain.entity;
 import java.util.Date;
-import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
  * 签到表(Checkin)表实体类

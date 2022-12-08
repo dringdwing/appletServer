@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.City;
+import com.vector.server.domain.entity.City;
 
 /**
  * 疫情城市列表(City)表服务接⼝

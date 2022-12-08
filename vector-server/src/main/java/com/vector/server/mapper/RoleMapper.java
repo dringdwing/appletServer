@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Role;
+import com.vector.server.domain.entity.Role;
 
 /**
  * 角色表(Role)表数据库访问层

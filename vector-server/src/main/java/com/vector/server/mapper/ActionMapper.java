@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Action;
+import com.vector.server.domain.entity.Action;
 
 /**
  * 行为表(Action)表数据库访问层

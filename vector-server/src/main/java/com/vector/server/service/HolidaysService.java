@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.Holidays;
+import com.vector.server.domain.entity.Holidays;
 
 /**
  * 节假日表(Holidays)表服务接⼝

@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Config;
+import com.vector.server.domain.entity.Config;
 
 /**
  * (Config)表数据库访问层

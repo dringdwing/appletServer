@@ -1,12 +1,10 @@
-package com.vector.server.entity;
-import java.io.Serializable;
+package com.vector.server.domain.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
- * 模块资源表(Module)表实体类
+ * 疫情城市列表(City)表实体类
  *
  * @author makejava
  * @since 2022-12-03 20:55:39
@@ -15,13 +13,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tb_module")
-public class Module {
+@TableName("tb_city")
+public class City {
     //主键@TableId
     private Long id;
 
-    //模块编号    
-    private String moduleCode;
-    //模块名称    
-    private String moduleName;
+    //城市名称    
+    private String city;
+    //拼音简称    
+    private String code;
 }

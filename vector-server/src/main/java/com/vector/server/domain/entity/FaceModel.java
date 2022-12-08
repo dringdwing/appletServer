@@ -1,13 +1,10 @@
-package com.vector.server.entity;
-import java.util.Date;
-import java.io.Serializable;
+package com.vector.server.domain.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
- * 节假日表(Holidays)表实体类
+ * (FaceModel)表实体类
  *
  * @author makejava
  * @since 2022-12-03 20:55:39
@@ -16,11 +13,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tb_holidays")
-public class Holidays {
-    //主键@TableId
+@TableName("tb_face_model")
+public class FaceModel {
+    //主键值@TableId
     private Long id;
 
-    //日期    
-    private Date date;
+    //用户ID    
+    private Long userId;
+    //用户人脸模型    
+    private String faceModel;
 }

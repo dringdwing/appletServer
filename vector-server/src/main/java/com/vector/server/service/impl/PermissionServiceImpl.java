@@ -1,6 +1,6 @@
 package com.vector.server.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.entity.Permission;
+import com.vector.server.domain.entity.Permission;
 import com.vector.server.mapper.PermissionMapper;
 import com.vector.server.service.PermissionService;
 import org.springframework.stereotype.Service;

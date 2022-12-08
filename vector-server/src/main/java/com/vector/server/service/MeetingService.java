@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.Meeting;
+import com.vector.server.domain.entity.Meeting;
 
 /**
  * 会议表(Meeting)表服务接⼝

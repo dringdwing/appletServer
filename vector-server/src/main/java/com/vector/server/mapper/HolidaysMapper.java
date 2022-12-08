@@ -1,6 +1,6 @@
 package com.vector.server.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.vector.server.entity.Holidays;
+import com.vector.server.domain.entity.Holidays;
 
 /**
  * 节假日表(Holidays)表数据库访问层

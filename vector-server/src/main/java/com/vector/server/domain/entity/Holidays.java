@@ -1,13 +1,12 @@
-package com.vector.server.entity;
+package com.vector.server.domain.entity;
 import java.util.Date;
-import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
- * (Workday)表实体类
+ * 节假日表(Holidays)表实体类
  *
  * @author makejava
  * @since 2022-12-03 20:55:39
@@ -16,10 +15,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tb_workday")
-public class Workday {
+@TableName("tb_holidays")
+public class Holidays {
     //主键@TableId
-    private Integer id;
+    private Long id;
 
     //日期    
     private Date date;

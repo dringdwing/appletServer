@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.FaceModel;
+import com.vector.server.domain.entity.FaceModel;
 
 /**
  * (FaceModel)表服务接⼝

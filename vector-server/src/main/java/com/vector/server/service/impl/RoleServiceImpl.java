@@ -1,6 +1,6 @@
 package com.vector.server.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.entity.Role;
+import com.vector.server.domain.entity.Role;
 import com.vector.server.mapper.RoleMapper;
 import com.vector.server.service.RoleService;
 import org.springframework.stereotype.Service;

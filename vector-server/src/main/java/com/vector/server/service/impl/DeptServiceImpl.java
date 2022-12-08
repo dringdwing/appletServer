@@ -1,6 +1,6 @@
 package com.vector.server.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.entity.Dept;
+import com.vector.server.domain.entity.Dept;
 import com.vector.server.mapper.DeptMapper;
 import com.vector.server.service.DeptService;
 import org.springframework.stereotype.Service;

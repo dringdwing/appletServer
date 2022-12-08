@@ -1,6 +1,6 @@
 package com.vector.server.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.entity.Meeting;
+import com.vector.server.domain.entity.Meeting;
 import com.vector.server.mapper.MeetingMapper;
 import com.vector.server.service.MeetingService;
 import org.springframework.stereotype.Service;

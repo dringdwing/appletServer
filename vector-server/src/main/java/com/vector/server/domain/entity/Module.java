@@ -1,12 +1,10 @@
-package com.vector.server.entity;
-import java.io.Serializable;
+package com.vector.server.domain.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
- * 角色表(Role)表实体类
+ * 模块资源表(Module)表实体类
  *
  * @author makejava
  * @since 2022-12-03 20:55:39
@@ -15,13 +13,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tb_role")
-public class Role {
+@TableName("tb_module")
+public class Module {
     //主键@TableId
     private Long id;
 
-    //角色名称    
-    private String roleName;
-    //权限集合    
-    private Object permissions;
+    //模块编号    
+    private String moduleCode;
+    //模块名称    
+    private String moduleName;
 }

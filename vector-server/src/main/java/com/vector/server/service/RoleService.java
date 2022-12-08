@@ -1,6 +1,6 @@
 package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.vector.server.entity.Role;
+import com.vector.server.domain.entity.Role;
 
 /**
  * 角色表(Role)表服务接⼝

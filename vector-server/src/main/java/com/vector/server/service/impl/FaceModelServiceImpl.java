@@ -1,6 +1,6 @@
 package com.vector.server.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.entity.FaceModel;
+import com.vector.server.domain.entity.FaceModel;
 import com.vector.server.mapper.FaceModelMapper;
 import com.vector.server.service.FaceModelService;
 import org.springframework.stereotype.Service;
