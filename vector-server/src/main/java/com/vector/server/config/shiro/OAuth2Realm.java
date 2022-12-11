@@ -1,9 +1,8 @@
 package com.vector.server.config.shiro;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import com.vector.server.domain.entity.User;
+import com.vector.server.service.UserService;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -11,6 +10,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 /**
  * @description: OAuth2 Realm类是AuthorizingRealm的实现类，要在这个实现类中定义认证和授权的方法。
@@ -26,6 +26,9 @@ public class OAuth2Realm extends AuthorizingRealm {
 
     @Resource
     private JwtUtil jwtUtil;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 判断是否支持当前token 是否为OAuth2Token类型的
@@ -46,10 +49,14 @@ public class OAuth2Realm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        User user = (User) principals.getPrimaryPrincipal();
+        Long id = user.getId();
+        // 查询用户的权限列表
+        Set<String> permsSet = userService.searchUserPermissions(id.intValue());
+        // 把权限列表添加到info对象中
         SimpleAuthorizationInfo info =new SimpleAuthorizationInfo();
-        //TODO 查询用户的权限列表
-        //TODO 把权限列表添加到info对象中
-         return info;
+        info.setStringPermissions(permsSet);
+        return info;
 
     }
 
@@ -62,9 +69,16 @@ public class OAuth2Realm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        // TODO 从令牌中获取userId,然后检测该账户是否被冻结。
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo();
-        // TODO 往info对象中添加用户信息、Token字符串
+        String accessToken = (String) token.getPrincipal();
+        int userId = jwtUtil.getUserId(accessToken);
+        //  从令牌中获取userId,然后检测该账户是否被冻结。
+        User user = userService.getBaseMapper().selectById(userId) ;
+        /*用户离职*/
+        if (user.getStatus() == 0) {
+            throw new LockedAccountException("账号已被冻结,请联系管理员");
+        }
+        //  往info对象中添加用户信息、Token字符串、当前Realm的名称
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, accessToken, getName());
         return info;
     }
 }

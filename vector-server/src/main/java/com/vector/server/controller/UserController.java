@@ -3,6 +3,7 @@ package com.vector.server.controller;
 
 import com.vector.server.config.shiro.JwtUtil;
 import com.vector.server.domain.vo.RegisterVo;
+import com.vector.server.domain.vo.loginVo;
 import com.vector.server.service.UserService;
 import com.vector.server.util.R;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +51,21 @@ public class UserController {
         return R.ok("用户注册成功").put("token", token).put("permissions", permissions);
     }
 
+    @PostMapping("/login")
+    @ApiOperation("登陆系统")
+    public R login(@Valid @RequestBody loginVo loginVo) {
+        int id = userService.login(loginVo.getCode());
+        String token = jwtUtil.createToken(id);
+        Set<String> permsSet = userService.searchUserPermissions(id);
+        saveCacheToken(token, id);
+        return R.ok("登陆成功").put("token", token).put("permissions", permsSet);
+    }
 
+    /**
+     * 保存token到缓存
+     * @param token
+     * @param userId
+     */
     private void saveCacheToken(String token, int userId) {
         redisTemplate.opsForValue().set(token, userId + "", cacheExpire, TimeUnit.DAYS);
     }

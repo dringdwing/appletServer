@@ -27,4 +27,6 @@ public interface UserService extends IService<User> {
      * @return
      */
     public Set<String> searchUserPermissions(int userId);
+
+    public Integer login(String code);
 }
