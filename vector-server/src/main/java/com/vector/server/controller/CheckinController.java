@@ -1,11 +1,15 @@
 package com.vector.server.controller;
 
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.vector.server.config.shiro.JwtUtil;
+import com.vector.server.constants.SystemConstants;
 import com.vector.server.domain.vo.CheckinVo;
+import com.vector.server.exception.AppleServerException;
 import com.vector.server.service.CheckinService;
+import com.vector.server.service.UserService;
 import com.vector.server.util.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +22,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -37,6 +42,12 @@ public class CheckinController {
 
     @Resource
     private CheckinService checkinService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private SystemConstants constants;
 
     @Value("${applet.image-folder}")
     private String imageFolder;
@@ -79,11 +90,65 @@ public class CheckinController {
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
                 return R.error("保存文件失败");
-            }finally {
+            } finally {
                 FileUtil.del(path);
             }
         }
         return R.ok();
     }
+
+    //创建新员工人脸模型数据
+    @PostMapping("/createFaceModel")
+    @ApiOperation(value = "创建新员工人脸模型数据")
+    public R createFaceModel(@RequestParam("photo") MultipartFile file, @RequestHeader("token") String token) {
+        if (file == null) {
+            return R.error("没有上传文件");
+        }
+        int userId = jwtUtil.getUserId(token);
+        String fileName = file.getOriginalFilename().toLowerCase();
+        if (!fileName.endsWith(".jpg")) {
+            return R.error("必须提交JPG格式图片");
+        } else {
+            String path = imageFolder + "/" + fileName;
+            try {
+                file.transferTo(Paths.get(path));
+                checkinService.createFaceModel(userId, path);
+                return R.ok("人脸建模成功");
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                throw new AppleServerException("图片保存错误");
+            } finally {
+                FileUtil.del(path);
+            }
+
+        }
+    }
+
+    //查询用户当日签到数据
+    @GetMapping("/searchTodayCheckin")
+    @ApiOperation(value = "查询用户当日签到数据")
+    public R getCheckinData(@RequestHeader("token") String token) {
+        int userId = jwtUtil.getUserId(token);
+        HashMap map = checkinService.searchTodayCheckin(userId);
+        map.put("attendanceTime", constants.attendanceTime);
+        map.put("closingTime", constants.closingTime);
+        long days = checkinService.searchCheckinDays(userId);
+        map.put("checkinDays", days);
+
+        DateTime hiredate = DateUtil.parse(userService.searchUserHiredate(userId));
+        DateTime startDate = DateUtil.beginOfDay(DateUtil.date()); // 今天开始时间
+        if (startDate.isBefore(hiredate)) {
+            startDate = hiredate;
+        }
+        DateTime endDate = DateUtil.endOfWeek(DateUtil.date()); //本周结束时间
+        HashMap param = new HashMap();
+        param.put("startDate", startDate.toString());
+        param.put("endDate", endDate.toString());
+        param.put("userId", userId);
+        ArrayList<HashMap> list = checkinService.searchWeekCheckin(param);
+        map.put("weekCheckin", list);
+        return R.ok().put("result", map);
+    }
+
 }
 

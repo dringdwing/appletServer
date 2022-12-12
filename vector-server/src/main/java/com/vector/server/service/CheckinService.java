@@ -3,6 +3,7 @@ package com.vector.server.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.vector.server.domain.entity.Checkin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -15,6 +16,7 @@ import java.util.HashMap;
 public interface CheckinService extends IService<Checkin> {
     /**
      * 查看用户是否可以签到
+     *
      * @param userId
      * @param today
      * @return
@@ -23,7 +25,27 @@ public interface CheckinService extends IService<Checkin> {
 
     /**
      * 签到
+     *
      * @param param
      */
     public void checkin(HashMap param);
+
+    /**
+     * c
+     *
+     * @param userId
+     * @param path
+     */
+    public void createFaceModel(int userId, String path);
+
+    public HashMap searchTodayCheckin(int userId);
+
+    public long searchCheckinDays(int userId);
+
+    /**
+     * 查询本周签到记录
+     * @param param
+     * @return
+     */
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param);
 }

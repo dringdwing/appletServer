@@ -29,4 +29,11 @@ public interface UserService extends IService<User> {
     public Set<String> searchUserPermissions(int userId);
 
     public Integer login(String code);
+
+    /**
+     * 查询入职时间 作为签到起始天数
+     * @param userId
+     * @return
+     */
+    public String searchUserHiredate(int userId);
 }

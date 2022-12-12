@@ -1,5 +1,7 @@
 package com.vector.server.service.impl;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -22,9 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 签到表(Checkin)表服务实现类
@@ -182,7 +182,7 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
                     }
 
                 }
-                // TODO 保存签到记录
+                //  保存签到记录
                 String address = (String) param.get("address");
                 String country = (String) param.get("country");
                 String province = (String) param.get("province");
@@ -194,11 +194,119 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
                 entity.setCity(city);
                 entity.setDistrict(district);
                 entity.setStatus(status);
+                entity.setRisk(risk);
                 entity.setDate(DateUtil.today());
                 entity.setCreateTime(d1);
                 this.getBaseMapper().insert(entity);
             }
         }
+    }
+
+    /**
+     * 创建新员工人脸模型数据
+     *
+     * @param userId
+     * @param path
+     */
+    @Override
+    public void createFaceModel(int userId, String path) {
+        HttpRequest request = HttpUtil.createPost(path)
+                .form("photo", FileUtil.file(path))
+                .form("code", code);
+        HttpResponse response = request.execute();
+        String body = response.body();
+        if ("无法识别出人脸".equals(body) || "照片中存在多张人脸".equals(body)) {
+            throw new AppleServerException(body);
+        } else {
+            FaceModel faceModel = new FaceModel();
+            faceModel.setUserId((long) userId);
+            faceModel.setFaceModel(body);
+            faceModelService.getBaseMapper().insert(faceModel);
+        }
+    }
+
+    /**
+     * 查询用户当天是否已经签到
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public HashMap searchTodayCheckin(int userId) {
+        HashMap map = this.getBaseMapper().searchTodayCheckin(userId);
+        return map;
+    }
+
+    /**
+     * 查询员工签到记录
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public long searchCheckinDays(int userId) {
+        long days = this.getBaseMapper().selectCount(new QueryWrapper<Checkin>()
+                .eq("user_id", userId));
+        return days;
+    }
+
+    /**
+     * 本周考勤统计 查询签到天数
+     * @param param
+     * @return
+     */
+    @SuppressWarnings("all")
+    @Override
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param) {
+        ArrayList<HashMap> checkinList = this.getBaseMapper().searchWeekCheckin(param);
+        List<Holidays> holidaysList = holidaysService.getBaseMapper()
+                .selectList(new QueryWrapper<Holidays>()
+                        .select("date")
+                        .between("date", param.get("startDate"), param.get("endDate"))); // 查询节假日
+        List<Workday> workdayList = workdayService.getBaseMapper()
+                .selectList(new QueryWrapper<Workday>()
+                        .select("date")
+                        .between("date", param.get("startDate"), param.get("endDate"))); // 查询工作日
+        DateTime startDate = DateUtil.parseDate(param.get("startDate").toString()); // 开始日期
+        DateTime endDate = DateUtil.parseDate(param.get("endDate").toString()); // 结束日期
+        DateRange range = DateUtil.range(startDate, endDate, DateField.DAY_OF_MONTH);   // 日期范围
+        ArrayList<HashMap> list = new ArrayList<>();
+        range.forEach(one -> {
+            String date = one.toString("yyyy-MM-dd");
+            String type = "工作日";
+            if (one.isWeekend()) {
+                type = "节假日";
+            }
+            if (holidaysList != null && holidaysList.contains(date)) { // 判断是否是节假日
+                type = "节假日";
+            } else if (workdayList != null && workdayList.contains(date)) { // 判断是否是工作日
+                type = "工作日";
+            }
+            String status = "";
+            if (type.equals("工作日") && DateUtil.compare(one, DateUtil.date()) <= 0) { // 如果是工作日并且日期小于等于今天
+                status = "缺勤";
+                boolean flag = false;
+                for (HashMap<String, String> map : checkinList) {
+                    if (map.containsValue(date)) {
+                        status = map.get("status");
+                        flag = true;
+                        break;
+                    }
+                }
+                DateTime endTime = DateUtil.parse(DateUtil.today() + " " + constants.attendanceEndTime); // 签退截止时间
+                String today = DateUtil.today();
+                if (date.equals(today) && DateUtil.date().isBefore(endTime) && flag == false) { // 如果是今天并且时间小于签退截止时间并且没有签到记录
+                    status = "";
+                }
+            }
+            HashMap map = new HashMap();
+            map.put("date", date);
+            map.put("status", status);
+            map.put("type", type);
+            map.put("day", one.dayOfWeekEnum().toChinese("周")); // 星期几
+            list.add(map);
+        });
+        return list;
     }
 
 }

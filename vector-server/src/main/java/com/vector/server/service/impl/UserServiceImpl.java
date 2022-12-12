@@ -5,7 +5,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.vector.server.domain.entity.Dept;
 import com.vector.server.domain.entity.User;
 import com.vector.server.exception.AppleServerException;
 import com.vector.server.mapper.UserMapper;
@@ -113,5 +112,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // TODO 从消息队列中接收消息，转移到消息表
         return user.getId().intValue();
+    }
+
+    /**
+     * 查询入职时间 作为签到起始天数
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public String searchUserHiredate(int userId) {
+        String hiredate = String.valueOf(baseMapper
+                .selectOne(new QueryWrapper<User>()
+                    .select("hiredate")
+                    .eq("id", userId)
+                    .eq("status", 1)).getHiredate());
+        return hiredate;
     }
 }

@@ -36,7 +36,7 @@ public class Checkin {
     //考勤结果    
     private Integer status;
     //风险等级    
-    private Long risk;
+    private Integer risk;
     //签到日期    
     private String date;
     //签到时间    
