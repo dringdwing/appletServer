@@ -6,7 +6,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.vector.server.config.shiro.JwtUtil;
 import com.vector.server.constants.SystemConstants;
-import com.vector.server.domain.vo.CheckinVo;
+import com.vector.server.domain.vo.CheckinVO;
+import com.vector.server.domain.vo.SearchMonthCheckinVO;
 import com.vector.server.exception.AppleServerException;
 import com.vector.server.service.CheckinService;
 import com.vector.server.service.UserService;
@@ -62,7 +63,7 @@ public class CheckinController {
 
     @PostMapping("/checkin")
     @ApiOperation(value = "签到")
-    public R checkIn(@Valid CheckinVo form, @RequestParam("photo") MultipartFile file, @RequestHeader("token") String token) {
+    public R checkIn(@Valid CheckinVO form, @RequestParam("photo") MultipartFile file, @RequestHeader("token") String token) {
         if (file.isEmpty()) {
             return R.error("上传文件为空");
         }
@@ -74,7 +75,6 @@ public class CheckinController {
         } else {
             // 保存文件到E盘
             String path = imageFolder + "/" + fileName;
-
             try {
                 file.transferTo(Paths.get(path));
                 HashMap param = new HashMap();
@@ -97,7 +97,7 @@ public class CheckinController {
         return R.ok();
     }
 
-    //创建新员工人脸模型数据
+
     @PostMapping("/createFaceModel")
     @ApiOperation(value = "创建新员工人脸模型数据")
     public R createFaceModel(@RequestParam("photo") MultipartFile file, @RequestHeader("token") String token) {
@@ -124,7 +124,7 @@ public class CheckinController {
         }
     }
 
-    //查询用户当日签到数据
+
     @GetMapping("/searchTodayCheckin")
     @ApiOperation(value = "查询用户当日签到数据")
     public R getCheckinData(@RequestHeader("token") String token) {
@@ -150,5 +150,42 @@ public class CheckinController {
         return R.ok().put("result", map);
     }
 
+
+    @GetMapping("/searchMonthCheckin")
+    @ApiOperation(value = "查询用户某月签到数据")
+    public R searchMonthCheckin(@Valid @RequestBody SearchMonthCheckinVO form, @RequestHeader("token") String token) {
+        int userId = jwtUtil.getUserId(token);
+
+        DateTime hiredate = DateUtil.parse(userService.searchUserHiredate(userId));
+        String month = form.getMonth() < 10 ? "0" + form.getMonth() : form.getMonth().toString();
+        DateTime startDate = DateUtil.parse(form.getYear() + "-" + month + "-01");
+        if (startDate.isBefore(DateUtil.beginOfMonth(hiredate))) {
+            throw new AppleServerException("只能查询考勤之后日期的数据");
+        }
+        if (startDate.isBefore(hiredate)) {
+            startDate = hiredate;
+        }
+        DateTime endDate = DateUtil.endOfMonth(startDate);
+        HashMap param = new HashMap();
+        param.put("userId", userId);
+        param.put("startDate", startDate.toString());
+        param.put("endDate", endDate.toString());
+        ArrayList<HashMap> list = checkinService.searchMonthCheckin(param);
+        int sum_1 = 0, sum_2 = 0, sum_3 = 0;
+        for (HashMap<String, String> one : list) {
+            String type = one.get("type");
+            String status = one.get("status");
+            if ("工作日".equals(type)) {
+                if ("正常".equals(status)) {
+                    sum_1++;
+                } else if ("迟到".equals(status)) {
+                    sum_2++;
+                } else if ("缺勤".equals(status)) {
+                    sum_3++;
+                }
+            }
+        }
+        return R.ok().put("list", list).put("sum_1", sum_1).put("sum_2", sum_2).put("sum_3", sum_3);
+    }
 }
 

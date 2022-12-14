@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public interface CheckinService extends IService<Checkin> {
     /**
-     * 查看用户是否可以签到
+     * 查看用户当天是否可以签到
      *
      * @param userId
      * @param today
@@ -24,14 +24,14 @@ public interface CheckinService extends IService<Checkin> {
     String validCanCheckIn(int userId, String today);
 
     /**
-     * 签到
+     * 实现人脸签到
      *
      * @param param
      */
     public void checkin(HashMap param);
 
     /**
-     * c
+     * 先判断签到用户是否存在人脸模型？如果存在，直接签到，如果不存在，先注册人脸模型，再签到
      *
      * @param userId
      * @param path
@@ -48,4 +48,11 @@ public interface CheckinService extends IService<Checkin> {
      * @return
      */
     public ArrayList<HashMap> searchWeekCheckin(HashMap param);
+
+    /**
+     * 查询本月签到记录
+     * @param param
+     * @return
+     */
+    public ArrayList<HashMap> searchMonthCheckin(HashMap param);
 }

@@ -2,8 +2,8 @@ package com.vector.server.controller;
 
 
 import com.vector.server.config.shiro.JwtUtil;
-import com.vector.server.domain.vo.RegisterVo;
-import com.vector.server.domain.vo.loginVo;
+import com.vector.server.domain.vo.RegisterVO;
+import com.vector.server.domain.vo.loginVO;
 import com.vector.server.service.UserService;
 import com.vector.server.util.R;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +42,7 @@ public class UserController {
 
     @PostMapping("/register")
     @ApiOperation(value = "用户注册")
-    public R register(@Valid @RequestBody RegisterVo registerVo) {
+    public R register(@Valid @RequestBody RegisterVO registerVo) {
         int id = userService.registerUser(registerVo.getRegisterCode(), registerVo.getCode(), registerVo.getNickname(), registerVo.getPhoto());
         String token = jwtUtil.createToken(id);
         Set<String> permissions = userService.searchUserPermissions(id);
@@ -53,7 +53,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation("登陆系统")
-    public R login(@Valid @RequestBody loginVo loginVo) {
+    public R login(@Valid @RequestBody loginVO loginVo) {
         int id = userService.login(loginVo.getCode());
         String token = jwtUtil.createToken(id);
         Set<String> permsSet = userService.searchUserPermissions(id);

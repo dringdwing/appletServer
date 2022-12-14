@@ -8,14 +8,14 @@ import javax.validation.constraints.Pattern;
 
 /**
  * @description: 接收前端注册表单的数据
- * @Title: RegisterVo
+ * @Title: RegisterVO
  * @Package com.vector.server.domain.vo
  * @Author 芝士汉堡
  * @Date 2022/12/8 17:19
  */
 @Data
 @ApiModel(value = "注册表单")
-public class RegisterVo {
+public class RegisterVO {
     @NotBlank(message = "注册码不能为空")
     @Pattern(regexp = "^[0-9]{6}$",message = "注册码格式不正确")
     private String registerCode;

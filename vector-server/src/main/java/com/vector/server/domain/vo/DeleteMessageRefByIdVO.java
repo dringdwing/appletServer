@@ -6,15 +6,15 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @description:
- * @Title: loginVo
+ * @description: 删除消息
+ * @Title: DeleteMessageRefByIdVO
  * @Package com.vector.server.domain.vo
  * @Author 芝士汉堡
- * @Date 2022/12/8 21:29
+ * @Date 2022/12/14 12:32
  */
+@ApiModel
 @Data
-@ApiModel(value = "登录表单")
-public class loginVo {
-    @NotBlank(message="临时授权不能为空")
-    private String code;
+public class DeleteMessageRefByIdVO {
+    @NotBlank
+    private String id;
 }

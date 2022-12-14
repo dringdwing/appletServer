@@ -28,6 +28,7 @@ import java.util.*;
 
 /**
  * 签到表(Checkin)表服务实现类
+ * 先判断签到用户是否存在人脸模型
  *
  * @author makejava
  * @since 2022-12-03 21:01:22
@@ -63,7 +64,7 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
     private String code;
 
     /**
-     * 查看用户是否可以签到
+     * 查看用户当天是否可以签到
      *
      * @param userId
      * @param today
@@ -115,7 +116,7 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
     }
 
     /**
-     * 签到
+     * 实现人脸签到
      *
      * @param param
      */
@@ -129,13 +130,15 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
             status = 1;
         } else if (d1.compareTo(d2) > 0 && d1.compareTo(d3) < 0) {
             status = 2;//迟到
+        } else {
+            throw new AppleServerException("超出考勤时间段，无法考勤");
         }
         int userId = (Integer) param.get("userId");
         FaceModel faceModel = faceModelService.getBaseMapper().selectOne(new QueryWrapper<FaceModel>()
                 .select("face_model")
                 .eq("user_id", userId));
         if (!Optional.ofNullable(faceModel.getFaceModel()).isPresent()) {
-            throw new AppleServerException("请先上传人脸模型");
+            throw new AppleServerException("不存在人脸模型");
         } else {
             /*将图片上传到人脸识别程序*/
             String path = (String) param.get("path");
@@ -182,7 +185,7 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
                     }
 
                 }
-                //  保存签到记录
+                //  保存签到记录 每天只能签到1次
                 String address = (String) param.get("address");
                 String country = (String) param.get("country");
                 String province = (String) param.get("province");
@@ -203,14 +206,14 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
     }
 
     /**
-     * 创建新员工人脸模型数据
+     * 先判断签到用户是否存在人脸模型 创建新员工人脸模型数据
      *
      * @param userId
      * @param path
      */
     @Override
     public void createFaceModel(int userId, String path) {
-        HttpRequest request = HttpUtil.createPost(path)
+        HttpRequest request = HttpUtil.createPost(createFaceModelUrl)
                 .form("photo", FileUtil.file(path))
                 .form("code", code);
         HttpResponse response = request.execute();
@@ -245,13 +248,15 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
      */
     @Override
     public long searchCheckinDays(int userId) {
-        long days = this.getBaseMapper().selectCount(new QueryWrapper<Checkin>()
-                .eq("user_id", userId));
+        long days = this.getBaseMapper()
+                .selectCount(new QueryWrapper<Checkin>()
+                        .eq("user_id", userId));
         return days;
     }
 
     /**
      * 本周考勤统计 查询签到天数
+     *
      * @param param
      * @return
      */
@@ -307,6 +312,17 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
             list.add(map);
         });
         return list;
+    }
+
+    /**
+     * 查询本月签到记录
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public ArrayList<HashMap> searchMonthCheckin(HashMap param) {
+        return this.searchWeekCheckin(param);
     }
 
 }

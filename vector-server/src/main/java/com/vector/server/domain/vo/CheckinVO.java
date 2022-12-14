@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * @description:
- * @Title: CheckinVo
+ * @Title: CheckinVO
  * @Package com.vector.server.domain.vo
  * @Author 芝士汉堡
  * @Date 2022/12/10 16:10
@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @ApiModel
-public class CheckinVo {
+public class CheckinVO {
     private String address;
     private String country;
     private String province;
