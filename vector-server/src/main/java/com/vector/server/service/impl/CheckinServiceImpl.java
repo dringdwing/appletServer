@@ -15,11 +15,15 @@ import com.vector.server.constants.SystemConstants;
 import com.vector.server.domain.entity.*;
 import com.vector.server.exception.AppleServerException;
 import com.vector.server.mapper.CheckinMapper;
+import com.vector.server.mapper.UserMapper;
 import com.vector.server.service.*;
+import com.vector.server.task.EmailTask;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,8 +53,12 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
     private FaceModelService faceModelService;
 
     @Resource
-    private CityService cityService;
+    private UserMapper userMapper;
 
+    @Resource
+    private CityService cityService;
+    @Autowired
+    private EmailTask emailTask;
     @Value("${applet.face.createFaceModelUrl}")
     private String createFaceModelUrl;
 
@@ -160,6 +168,9 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
                 int risk = 1;
                 String city = (String) param.get("city");
                 String district = (String) param.get("district");
+                String address = (String) param.get("address");
+                String country = (String) param.get("country");
+                String province = (String) param.get("province");
                 if (!StrUtil.isEmpty(city) && !StrUtil.isEmpty(district)) {
                     City cityCode = cityService.getBaseMapper().selectOne(new QueryWrapper<City>()
                             .select("code")
@@ -174,7 +185,15 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
                             if ("高风险".equals(result)) {
                                 risk = 3;
                                 // TODO 发送警告邮件
-
+                                HashMap<String, String> map = userMapper.searchNameAndDept(userId);
+                                String name = map.get("name");
+                                String deptName = map.get("dept_name");
+                                deptName = deptName != null ? deptName : "";
+                                SimpleMailMessage message = new SimpleMailMessage();
+                                message.setTo(hrEmail);
+                                message.setSubject("员工" + name + "身处高风险疫情地区警告");
+                                message.setText(deptName + "员工" + name + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + address + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
+                                emailTask.sendAsync(message);
                             } else if ("中风险".equals(result)) {
                                 risk = 2;
                             }
@@ -186,9 +205,7 @@ public class CheckinServiceImpl extends ServiceImpl<CheckinMapper, Checkin> impl
 
                 }
                 //  保存签到记录 每天只能签到1次
-                String address = (String) param.get("address");
-                String country = (String) param.get("country");
-                String province = (String) param.get("province");
+
                 Checkin entity = new Checkin();
                 entity.setUserId((long) userId);
                 entity.setAddress(address);

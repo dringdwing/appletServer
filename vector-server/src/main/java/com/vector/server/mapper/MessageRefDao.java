@@ -30,7 +30,7 @@ public class MessageRefDao {
      * @return
      */
     public String insert(MessageRefEntity entity) {
-        entity = mongoTemplate.insert(entity);
+        entity = mongoTemplate.save(entity);
         return entity.get_id();
     }
 

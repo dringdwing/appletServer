@@ -39,5 +39,13 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     public Set<String> searchUserPermissions(int userId);
+
+
+    /**
+     * 查询用户名和所属部门
+     * @param userId
+     * @return
+     */
+    public HashMap searchNameAndDept(int userId);
 }
 

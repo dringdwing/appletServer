@@ -2,7 +2,6 @@ package com.vector.server.service;
 
 import com.vector.server.domain.pojo.MessageEntity;
 import com.vector.server.domain.pojo.MessageRefEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  * @Author 芝士汉堡
  * @Date 2022/12/14 11:44
  */
-@Service
+
 public interface MessageService {
     /**
      * 向Message集合插入数据

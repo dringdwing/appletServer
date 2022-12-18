@@ -27,5 +27,6 @@ public interface CheckinMapper extends BaseMapper<Checkin> {
      * @return
      */
     public ArrayList<HashMap> searchWeekCheckin(HashMap param);
+
 }
 

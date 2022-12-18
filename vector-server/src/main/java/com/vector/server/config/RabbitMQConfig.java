@@ -18,8 +18,6 @@ public class RabbitMQConfig {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("175.178.216.62");
         connectionFactory.setPort(5672);
-        connectionFactory.setUsername("guest");
-        connectionFactory.setPassword("guest");
         return connectionFactory;
     }
 }

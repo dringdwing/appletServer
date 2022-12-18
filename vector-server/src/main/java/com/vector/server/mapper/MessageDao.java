@@ -38,9 +38,10 @@ public class MessageDao {
      * @return
      */
     public String insert(MessageEntity entity) {
-        Date offset = DateUtil.offset(entity.getSendTime(), DateField.HOUR, 8);
-        entity.setSendTime(offset);
-        entity = mongoTemplate.insert(entity);
+        Date sendTime = entity.getSendTime();
+        sendTime = DateUtil.offset(sendTime, DateField.HOUR, 8);
+        entity.setSendTime(sendTime);
+        entity = mongoTemplate.save(entity);
         return entity.get_id();
     }
 

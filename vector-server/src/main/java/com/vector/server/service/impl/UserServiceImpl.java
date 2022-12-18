@@ -1,15 +1,18 @@
 package com.vector.server.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.vector.server.domain.entity.User;
+import com.vector.server.domain.pojo.MessageEntity;
 import com.vector.server.exception.AppleServerException;
 import com.vector.server.mapper.UserMapper;
 import com.vector.server.service.DeptService;
 import com.vector.server.service.UserService;
+import com.vector.server.task.MessageTask;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +31,15 @@ import java.util.Set;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Value("${wx.app-id}")
     private String appId;
+
     @Value("${wx.app-secret}")
     private String appSecret;
+
     @Resource
     private DeptService deptService;
+
+    @Resource
+    private MessageTask messageTask;
 
     /**
      * 获取OpenId
@@ -46,9 +54,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         map.put("secret", appSecret);
         map.put("js_code", code);
         map.put("grant_type", "authorization_code");
-        String response=HttpUtil.post(url,map);
-        JSONObject json=JSONUtil.parseObj(response);
-        String openId=json.getStr("openid");
+        String response = HttpUtil.post(url, map);
+        JSONObject json = JSONUtil.parseObj(response);
+        String openId = json.getStr("openid");
         if (openId == null || openId.length() == 0) {
             throw new RuntimeException("临时登录凭证错误");
         }
@@ -65,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (!bool) {
 //                Dept dept = deptService.getBaseMapper().selectOne(new QueryWrapper<Dept>()
 //                        .select("id")
-//                        .eq("dept_name", "value"));
+//                        .eq(deptName!=null,"dept_name", "value"));
                 String openId = getOpenId(code);
                 User user = new User();
                 user.setOpenId(openId);
@@ -79,6 +87,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 User userId = baseMapper.selectOne(new QueryWrapper<User>()
                         .eq("open_id", openId)
                         .eq("status", 1));
+
+
+                MessageEntity messageEntity = new MessageEntity();
+                messageEntity.setSenderId(0);
+                messageEntity.setSenderName("系统消息");
+                messageEntity.setUuid(IdUtil.simpleUUID());
+                messageEntity.setMsg("欢迎您，" + nickname + "，您已成功注册为管理员！");
+                messageEntity.setSendTime(new Date());
+                messageTask.sendAsync(userId.getId() + "", messageEntity);
+
+
                 return userId.getId().intValue();
             }
 
@@ -110,7 +129,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new AppleServerException("用户不存在");
         }
-        // TODO 从消息队列中接收消息，转移到消息表
+        //  从消息队列中接收消息，转移到消息表
+        messageTask.receiveAsync(user.getId() + "");
         return user.getId().intValue();
     }
 
@@ -124,9 +144,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public String searchUserHiredate(int userId) {
         String hiredate = String.valueOf(baseMapper
                 .selectOne(new QueryWrapper<User>()
-                    .select("hiredate")
-                    .eq("id", userId)
-                    .eq("status", 1)).getHiredate());
+                        .select("hiredate")
+                        .eq("id", userId)
+                        .eq("status", 1)).getHiredate());
         return hiredate;
     }
 }

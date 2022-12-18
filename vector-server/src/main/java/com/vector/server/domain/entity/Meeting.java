@@ -1,11 +1,10 @@
 package com.vector.server.domain.entity;
-import java.time.LocalTime;
-import java.util.Date;
-
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.util.Date;
 /**
  * 会议表(Meeting)表实体类
  *
@@ -28,13 +27,13 @@ public class Meeting {
     //创建人ID    
     private Long creatorId;
     //日期    
-    private Date date;
+    private String date;
     //开会地点    
     private String place;
     //开始时间    
-    private LocalTime start;
+    private String start;
     //结束时间    
-    private LocalTime end;
+    private String end;
     //会议类型（1在线会议，2线下会议）    
     private Integer type;
     //参与者    

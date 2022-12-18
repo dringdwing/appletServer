@@ -5,6 +5,7 @@ import com.vector.server.domain.vo.SearchMessageByIdVO;
 import com.vector.server.domain.vo.SearchMessageByPageVO;
 import com.vector.server.domain.vo.UpdateUnreadMessageVO;
 import com.vector.server.service.MessageService;
+import com.vector.server.task.MessageTask;
 import com.vector.server.util.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,8 +31,10 @@ public class MessageController {
     private JwtUtil jwtUtil;
 
     @Resource
-    private
-    MessageService messageservice;
+    private MessageService messageservice;
+
+    @Resource
+    private MessageTask messageTask;
 
     @GetMapping("/searchMessageByPage")
     @ApiOperation(value = "获取分页消息列表")
@@ -62,6 +65,20 @@ public class MessageController {
     public R deleteMessage(@Valid @RequestBody SearchMessageByIdVO searchMessageByIdVO) {
         long rows = messageservice.deleteMessageRefById(searchMessageByIdVO.getId());
         return R.ok().put("result", rows == 1 ? true : false);
+    }
+
+    @GetMapping("/refreshMessage")
+    @ApiOperation("刷新用户消息")
+    public R refreshMessage(@RequestHeader String token) {
+        int userId = jwtUtil.getUserId(token);
+        // 异步接收消息
+        messageTask.receiveAsync(userId + "");
+        // 查询接受了多少条消息
+        Long lastRows = messageservice.searchLastCount(userId);
+        // 擦查询未读数据
+        Long UnreadRows = messageservice.searchUnreadCount(userId);
+
+        return R.ok().put("lastRows", lastRows).put("UnreadRows", UnreadRows);
     }
 
 }

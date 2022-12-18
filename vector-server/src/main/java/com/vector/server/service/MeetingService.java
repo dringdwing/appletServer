@@ -9,4 +9,5 @@ import com.vector.server.domain.entity.Meeting;
  * @since 2022-12-03 20:55:39
  */
 public interface MeetingService extends IService<Meeting> {
+    public void insertMeeting(Meeting entity);
 }

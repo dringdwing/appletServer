@@ -5,6 +5,7 @@ import com.vector.server.domain.pojo.MessageRefEntity;
 import com.vector.server.mapper.MessageDao;
 import com.vector.server.mapper.MessageRefDao;
 import com.vector.server.service.MessageService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.List;
  * @Author 芝士汉堡
  * @Date 2022/12/14 11:57
  */
+@Service("messageService")
 public class MessageServiceImpl implements MessageService {
 
     @Resource
@@ -33,7 +35,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public String insertMessage(MessageEntity entity) {
-        return messageDao.insert(entity);
+        String id = messageDao.insert(entity);
+        return id;
     }
 
     /**
@@ -44,7 +47,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public String insertRef(MessageRefEntity entity) {
-        return messageRefDao.insert(entity);
+        String id = messageRefDao.insert(entity);
+        return id;
     }
 
     /**
@@ -55,7 +59,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public Long searchUnreadCount(int userId) {
-        return messageRefDao.searchUnreadCount(userId);
+        long count = messageRefDao.searchUnreadCount(userId);
+        return count;
     }
 
     /**
@@ -66,7 +71,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public Long searchLastCount(int userId) {
-        return messageRefDao.searchLastCount(userId);
+        long count = messageRefDao.searchLastCount(userId);
+        return count;
     }
 
     /**
@@ -79,7 +85,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public List<HashMap> searchMessageByPage(int userId, long start, int length) {
-        return messageDao.searchMessageByPage(userId, start, length);
+        List<HashMap> list = messageDao.searchMessageByPage(userId, start, length);
+        return list;
     }
 
     /**
@@ -90,7 +97,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public HashMap searchMessageById(String userId) {
-        return messageDao.searchMessageById(userId);
+        HashMap map = messageDao.searchMessageById(userId);
+        return map;
     }
 
     /**
@@ -101,7 +109,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public Long updateUnreadMessage(String id) {
-        return messageRefDao.updateUnreadMessage(id);
+        long rows = messageRefDao.updateUnreadMessage(id);
+        return rows;
     }
 
     /**
@@ -112,7 +121,8 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public Long deleteMessageRefById(String id) {
-        return messageRefDao.deleteMessageRefById(id);
+        long rows = messageRefDao.deleteMessageRefById(id);
+        return rows;
     }
 
     /**
@@ -123,6 +133,7 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public Long deleteUserMessageRef(int userId) {
-        return messageRefDao.deleteUserMessageRef(userId);
+        long rows = messageRefDao.deleteUserMessageRef(userId);
+        return rows;
     }
 }

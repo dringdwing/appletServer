@@ -37,7 +37,7 @@ public class MessageTask {
             HashMap map = new HashMap<>();
             map.put("messageId", id);
             AMQP.BasicProperties build = new AMQP.BasicProperties().builder().headers(map).build(); // 设置消息头 用于接收端获取消息id 用于更新消息状态
-            channel.basicPublish("", topic, build, entity.getMsg().getBytes());
+            channel.basicPublish("", topic, build, entity.getMsg().getBytes()); // exchange:交换机 routingKey:路由键 props:消息属性 body:消息体
             log.debug("消息发送成功");
         } catch (Exception e) {
             log.error("消息发送失败", e);
